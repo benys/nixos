@@ -68,7 +68,7 @@ in {
         paper-icon-theme # for rofi
       ];
       fonts = {
-        fonts = with pkgs; [
+        packages = with pkgs; [
           fira-code
           fira-code-symbols
           open-sans
@@ -119,7 +119,7 @@ in {
         (mkIf desktop.apps.rofi.enable {
           "rofi/theme" = { source = ./config/rofi; recursive = true; };
         })
-        (mkIf (desktop.bspwm.enable || desktop.stumpwm.enable) {
+        (mkIf (desktop.bspwm.enable || desktop.bspwm.enable) {
           "polybar" = { source = ./config/polybar; recursive = true; };
           "dunst/dunstrc".text = import ./config/dunstrc cfg;
           "Dracula-purple-solid-kvantum" = {
@@ -131,9 +131,6 @@ in {
             text = "theme=Dracula-purple-solid";
             target = "Kvantum/kvantum.kvconfig";
           };
-        })
-        (mkIf desktop.media.graphics.vector.enable {
-          "inkscape/templates/default.svg".source = ./config/inkscape/default-template.svg;
         })
         (mkIf desktop.browsers.qutebrowser.enable {
           "qutebrowser/extra/theme.py".source = ./config/qutebrowser/theme.py;

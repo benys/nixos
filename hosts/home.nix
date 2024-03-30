@@ -2,7 +2,8 @@
 
 with builtins;
 with lib;
-let blocklist = fetchurl https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts;
+#let blocklist = fetchurl https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts;
+let blocklist = "";
 in {
   networking.extraHosts = ''
     192.168.1.1   router.home
@@ -22,7 +23,6 @@ in {
       ''}
 
     # Block garbage
-    ${optionalString config.services.xserver.enable (readFile blocklist)}
   '';
 
   ## Location config -- since Toronto is my 127.0.0.1

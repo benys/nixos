@@ -1,5 +1,5 @@
 #!/usr/bin/env cached-nix-shell
-#! nix-shell -p ruby_2_7 -i "ruby -S" --quiet
+#! nix-shell -p ruby_3_3 -i "ruby -S" --quiet
 
 DESC = <<~DESC
   Nix's CLI has a poor user story, in my opinion. It could be better; Guix is a
@@ -74,6 +74,17 @@ module Hey
         "--flake", "#{@@opts[:flake]}##{@@opts[:host]}",
         "--option", "pure-eval", "no",
         *args], sudo: sudo
+  end
+  def self.update(*args)
+    if args.empty?
+      puts "Updating all flakes.."
+      sh ["nix", "flake", "update", @@opts[:flake], "--impure"]
+    else
+      puts "Trying to update flakes: #{args.join ' '}"
+      sh ["nix", "flake", "lock", "--impure"]
+            .concat(args.map { |f| [ "--update-input", f ]}.flatten)
+            .concat([@@opts[:flake]])
+    end
   end
 
   #
@@ -181,7 +192,7 @@ module Hey
     desc "Update all flakes and rebuild system"
     lambda do |_args|
       update
-      rebuild :switch
+      rebuild :switch, sudo: true
     end
   end
 
@@ -239,7 +250,7 @@ module Hey
         sh %w{nix-store --optimise}, sudo: true
         # Clear out left-over secrets. The switch-to-configuration call below will
         # regenerate them.
-        if File.exists?("/run/secrets/*")
+        if File.exist?("/run/secrets/*")
           sh %w{rm -rf /run/secrets/*}, sudo: true
         end
         # nix-collect-garbage is a Nix tool, not a NixOS tool. It won't delete old

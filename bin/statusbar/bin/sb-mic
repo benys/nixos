@@ -1,0 +1,9 @@
+# !/bin/sh
+
+f=$(pactl list source-outputs | grep "RecordStream" -A 1 | grep "application" | cut --delimiter="=" --fields=2 | tr "\"" " " | awk '{gsub(/^[ \t]+|[ \t]+$/, ""); printf("%s%s", sep, $0); sep=","}')
+
+if [ -z "$f" ]; then
+	echo ""
+else
+	echo "🎤 $f"
+fi

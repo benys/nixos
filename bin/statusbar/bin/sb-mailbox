@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Displays number of unread mail and an loading icon if updating.
+# When clicked, brings up `neomutt`.
+
+case $BLOCK_BUTTON in
+	1) setsid -f "$TERMINAL" -e neomutt ;;
+	2) setsid -f mailsync >/dev/null ;;
+	3) notify-send "📬 Mail module" "\- Shows unread mail
+- Shows 🔃 if syncing mail
+- Left click opens neomutt
+- Middle click syncs mail" ;;
+	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+unread1="$(find "${XDG_DATA_HOME:-$HOME/.local/share}"/mail/kserwus@gmail.com/INBOX/new -type f | wc -l 2>/dev/null)"
+unread2="$(find "${XDG_DATA_HOME:-$HOME/.local/share}"/mail/kamil.serwus@m2t.com.pl/INBOX/new -type f | wc -l 2>/dev/null)"
+unread3="$(find "${XDG_DATA_HOME:-$HOME/.local/share}"/mail/kamil.serwus@pinappall.com/INBOX/new -type f | wc -l 2>/dev/null)"
+
+pidof mbsync >/dev/null 2>&1 && icon="🔃"
+
+[ "$unread1" = "0" ] && [ "$unread2" = "0" ] && [ "$unread3" = "0" ] && [ "$icon" = "" ] || echo "📬$unread1/$unread2/$unread3$icon"
